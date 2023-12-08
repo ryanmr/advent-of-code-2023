@@ -20,7 +20,9 @@ fn main() {
     let min = results.into_iter().min().unwrap();
 
     println!("answer = {}", min);
-    // ???
+    // 6082852
+    // disclaimer
+    // this was brute forced - made time possible with rayon and space possible by m1 (fails on linux)
 }
 
 #[derive(Debug)]
@@ -61,6 +63,8 @@ fn parse_almanac(input: &str) -> Almanac {
 
         let position = seed_line_numbers[i];
         let offset = seed_line_numbers[i + 1];
+
+        println!("seed group = {}", position);
 
         for n in position..(position + offset) {
             seeds.push(n);
@@ -153,9 +157,12 @@ fn find_trace_seed_to_location(almanac: &Almanac, seed: u64) -> u64 {
     for ord in order.into_iter() {
         let maps = almanac.maps.get(ord).unwrap();
         for map in maps.into_iter() {
-            if val >= map.source_range_start && val <= map.source_range_start + map.range_length {
+            // val should equal or greater than source,
+            // val should be less than source + range; but NOT less than
+            // off by one haunts us all
+            if val >= map.source_range_start && val < map.source_range_start + map.range_length {
                 // println!(
-                //     "{}: {} >= {} && {} <= {}",
+                //     "{}: {} >= {} && {} < {}",
                 //     ord,
                 //     val,
                 //     map.source_range_start,
